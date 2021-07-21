@@ -35,5 +35,5 @@ print("Parsed Data")
 df.show()
 df.printSchema()
 
-df.write.format("jdbc").option("url", db_url).option("user", "songhyun").option("dbtable", "Working").mode("overwrite").save()
+df.write.option("url", db_url).option("user", "songhyun").option("dbtable", "Working").format("jdbc").mode("overwrite").save()
 # df.write.format("jdbc").option("url", db_url).option("dbtable", "dummy").option("createTableColumnTypes", '''date string, payment string, treat_name string, price BIGINT, uuid4 string, patient_name string, age INTEGER, sex string, dentist string, clinic_name string, address string, telephone string''').save()
