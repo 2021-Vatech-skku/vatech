@@ -8,7 +8,7 @@ args = {
   'owner' : 'Songhyun',
   'start_date' : days_ago(2),
   'retries' : 2,
-  'retry_delay', timedelta(minutes=5),
+  'retry_delay': timedelta(minutes=5)
 }
 
 dag = DAG('workflow', schedule_interval = '@daily', default_args = args)
