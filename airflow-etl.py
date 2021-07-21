@@ -12,13 +12,13 @@ args = {
 }
 
 dag = DAG('workflow', schedule_interval = '@daily', default_args = args)
-
+homepath = "/usr/local/airflow"
 # save raw data to data lake
-task1 = BashOperator(task_id='Fetch', bash_command="spark-submit fetch.py", dag=dag)
+task1 = BashOperator(task_id='Fetch', bash_command=homepath + "spark/bin/spark-submit " + homepath + "source/fetch.py", dag=dag)
 # get raw data from data lake and etl as delta lake
-task2 = BashOperator(task_id="ETL", bash_command="spark-submit etl.py", dag=dag)
+task2 = BashOperator(task_id="ETL", bash_command=homepath + "spark/bin/spark-submit " + homepath + "source/etl.py", dag=dag)
 # get etl data and update database
-task3 = BashOperator(task_id="update Database", bash_command="spark-submit update-databases", dag=dag)
+task3 = BashOperator(task_id="update_Database", bash_command=homepath + "spark/bin/spark-submit " + homepath + "source/update-databases.py", dag=dag)
 
 # schedule
-t1 >> t2 >> t3
+task1 >> task2 >> task3
