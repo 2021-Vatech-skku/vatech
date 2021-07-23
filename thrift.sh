@@ -14,3 +14,5 @@ $SPARK_HOME/sbin/start-thriftserver.sh --conf spark.sql.warehouse.dir=$SPARK_HOM
   --conf spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem \
   --conf spark.hadoop.fs.s3a.endpoint=https://minio.develop.vsmart00.com \
   --packages io.delta:delta-core_2.12:${DELTA_LAKE_VERSION},org.apache.hadoop:hadoop-aws:${HADOOP_VERISON} $@
+
+# create table patients using DELTA location "s3a://bigdata/patients"
