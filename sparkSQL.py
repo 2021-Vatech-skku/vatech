@@ -1,39 +1,25 @@
-'''
-  1. java -jar metabase.jar
-  2. $SPARK_HOME \ ./sbin/start-thriftserver.sh
-  3. beeline \ !connect jdbc:hive2://localhost:10000
-  4. spark-submit jdbc.py
-'''
-
+import os
 from pyspark.sql import *
 from pyspark.sql.types import *
+from delta.tables import *
 
-schema = StructType([
-  StructField("date", StringType(), False),
-  StructField("payment", StringType(), False),
-  StructField("treat_name", StringType(), False),
-  StructField("price", LongType(), False),
-  StructField("uuid4", StringType(), False),
-  StructField("patient_name", StringType(), False),
-  StructField("age", IntegerType(), False),
-  StructField("sex", StringType(), False),
-  StructField("dentist", StringType(), False),
-  StructField("clinic_name", StringType(), False),
-  StructField("address", StringType(), False),
-  StructField("telephone", StringType(), False)
-])
+WAREHOUSE_PATH = os.environ.get("SPARK_HOME") + "/spark-warehouse"
 
-spark = SparkSession.builder.appName("Dataframe to metabase using Thrift JDBC Server")\
-  .enableHiveSupport()\
+spark = SparkSession.builder.appName("Query Through Thrift JDBC Server")\
+  .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")\
+  .config("hive.metastore.uris", "jdbc:hive2://localhost:10000/default")\
   .getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
+  # .config("spark.sql.warehouse.dir", WAREHOUSE_PATH)\
 
-df = spark.read.schema(schema).format("parquet").load("./parsed/parquet")
-db_url = "jdbc:hive2://localhost:10000/sql_study"
+df = spark.read.format("parquet").load("./parsed/parquet")
+db_url = "jdbc:hive2://localhost:10000/"
 
 print("Parsed Data")
 df.show()
 df.printSchema()
 
-df.write.format("jdbc").option("url", db_url).option("user", "songhyun").option("dbtable", "test").mode("append").save()
-# df.write.format("jdbc").option("url", db_url).option("dbtable", "dummy").option("createTableColumnTypes", '''date string, payment string, treat_name string, price BIGINT, uuid4 string, patient_name string, age INTEGER, sex string, dentist string, clinic_name string, address string, telephone string''').save()
+df.createOrReplaceTempView("thirt")
+spark.sql("select * from thirt").show()
+
+df.write.format("delta").mode("overwrite").save("delta")
