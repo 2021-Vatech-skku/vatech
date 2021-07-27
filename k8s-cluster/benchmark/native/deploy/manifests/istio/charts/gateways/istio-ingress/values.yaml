@@ -31,7 +31,7 @@ gateways:
     rollingMaxUnavailable: 25%
     autoscaleEnabled: true
     autoscaleMin: 1
-    autoscaleMax: 5
+    autoscaleMax: 1
 
     cpu:
       targetAverageUtilization: 80
@@ -40,9 +40,9 @@ gateways:
       requests:
         cpu: 100m
         memory: 128Mi
-      limits:
-        cpu: 2000m
-        memory: 1024Mi
+      # limits:
+      #   cpu: 2000m
+      #   memory: 1024Mi
 
     loadBalancerIP: ""
     loadBalancerSourceRanges: []

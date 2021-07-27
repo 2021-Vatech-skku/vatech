@@ -1,0 +1,25 @@
+     █ setup
+
+     █ echoserver
+
+       ✗ Status was 200
+        ↳  69% — ✓ 281174 / ✗ 124950
+
+     checks.........................: 69.23% ✓ 281174      ✗ 124950
+     data_received..................: 545 MB 1.4 MB/s
+     data_sent......................: 30 MB  78 kB/s
+     group_duration.................: avg=35.66µs min=9.07µs med=29.44µs max=2.99ms p(90)=61.14µs p(95)=75.85µs
+     http_req_blocked...............: avg=22.62ms min=0s     med=1µs     max=29.09s p(90)=1µs     p(95)=1µs    
+     http_req_connecting............: avg=6.59ms  min=0s     med=0s      max=6.13s  p(90)=0s      p(95)=0s     
+     http_req_duration..............: avg=2.57s   min=0s     med=1.54s   max=1m0s   p(90)=6.49s   p(95)=8.91s  
+       { expected_response:true }...: avg=2.04s   min=2.7ms  med=1.29s   max=59.4s  p(90)=4.8s    p(95)=7s     
+     http_req_failed................: 30.76% ✓ 124950      ✗ 281174
+     http_req_receiving.............: avg=12.7ms  min=0s     med=62µs    max=31.38s p(90)=365µs   p(95)=1.48ms 
+     http_req_sending...............: avg=43.54µs min=0s     med=32µs    max=4.14ms p(90)=74µs    p(95)=101µs  
+     http_req_tls_handshaking.......: avg=16.03ms min=0s     med=0s      max=28.88s p(90)=0s      p(95)=0s     
+     http_req_waiting...............: avg=2.55s   min=0s     med=1.54s   max=1m0s   p(90)=6.46s   p(95)=8.88s  
+     http_reqs......................: 406124 1041.335037/s
+     iteration_duration.............: avg=2.69s   min=1.58µs med=1.65s   max=1m0s   p(90)=6.67s   p(95)=9.09s  
+     iterations.....................: 406124 1041.335037/s
+     vus............................: 20     min=20        max=3000
+     vus_max........................: 3000   min=3000      max=3000

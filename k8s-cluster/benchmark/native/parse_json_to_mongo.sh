@@ -1,6 +1,7 @@
 #!/bin/sh
 FILENAME=$1
 BASENAME=${FILENAME%.*}
+BASENAME=${BASENAME#./}
 
 echo "parsing $1.."
 METRICNAME=(

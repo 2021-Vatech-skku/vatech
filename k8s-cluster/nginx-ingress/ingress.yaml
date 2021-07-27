@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: elastic
+spec:
+  type: ExternalName
+  externalName: elasticsearch-cluster-es-http.elasticsearch.svc.cluster.local
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: elastic-ingress
+  labels:
+    name: elastic-ingress
+spec:
+  rules:
+  - host: elastic.nginx.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: elastic
+            port: 
+              number: 9200

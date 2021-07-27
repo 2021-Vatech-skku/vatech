@@ -5,7 +5,7 @@ import { randomString } from "https://jslib.k6.io/k6-utils/1.1.0/index.js"
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 
 export let errorRate = new Rate('error')
-const ElasticURL = `http://${__ENV.ELASTIC_HOST}`
+const ElasticURL = `http://${__ENV.HOST}`
 const IndexName = "/k6-benchmark"
 
 export function setup() {
