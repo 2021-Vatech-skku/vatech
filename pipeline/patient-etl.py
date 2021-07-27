@@ -10,22 +10,13 @@ timetostr = udf(lambda x: datetime.fromtimestamp(x).strftime("%Y%m%d") if type(x
 
 schema = StructType(
     [
-      StructField(
-          "_id", StructType([StructField("$oid", StringType(), False)]), False
-      ),
-      StructField("content", StructType([
-        StructField("tx", StructType([
-          StructField("treatments", ArrayType(StructType([
-            StructField("treats", ArrayType(StructType([
-              StructField("name", StringType(), False),
-              StructField("price", IntegerType(), False)
-            ])),False)
-          ])), False)
-        ]), False)
-      ]), False),
       StructField("hospitalId", StringType(), False),
-      StructField("date", StructType([StructField("$date", IntegerType(), False)]), False),
-      StructField("patient", StringType(), False)
+      StructField("birthDate", StructType([StructField("$date", IntegerType(), False)]), False),
+      StructField("id", StringType(), False),
+      StructField("name", StringType(), False),
+      StructField("newOrExistingPatient", StringType(), False),
+      StructField("sex", StringType(), False),
+      StructField("address", StringType(), False),
     ]
 )
 
@@ -40,19 +31,18 @@ sc.set("spark.hadoop.fs.s3a.endpoint", "https://minio.develop.vsmart00.com")
 spark = SparkSession.builder.appName("Chart ETL").config(conf=sc).getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
-df = spark.read.format("json").load("s3a://mongodb/topics/clever.dev0-chart")
-
+df = spark.read.format("json").load("s3a://mongodb/topics/clever.dev0-patient")
 df = df.filter(df.operationType == "insert").select("fullDocument")
 df = df.withColumn("test", from_json(df.fullDocument, schema)).select("test.*")
-df = df.withColumn("content", explode(flatten("content.tx.treatments.treats")))
-df = df.withColumn("date", timetostr(df["date.$date"]))
+df = df.withColumn("date", timetostr(df["birthDate.$date"]))
 df = df.select(
-  df["_id.$oid"].alias("oid"), 
-  df["content.name"].alias("name"), 
-  df["content.price"].alias("price"), 
+  df["id"].alias("patient"), 
   df["hospitalId"].alias("hospital"), 
-  "date", 
-  "patient"
+  "sex",
+  "name", 
+  "address",
+  df["date"].alias("birth"), 
+  df["newOrExistingPatient"].alias("existing"), 
 )
 
 df.show(10, truncate=False)
@@ -64,5 +54,5 @@ spark.stop()
 sc.set("spark.hadoop.fs.s3a.endpoint", "http://minio.it.vsmart00.com")
 spark = SparkSession.builder.appName("Chart ETL").config(conf=sc).getOrCreate()
 df = spark.createDataFrame(tmp)
-df.coalesce(1).write.format("delta").save("s3a://songhyun/chart")
+df.coalesce(1).write.format("delta").save("s3a://songhyun/patient")
 print("Uploaded to K8S")
