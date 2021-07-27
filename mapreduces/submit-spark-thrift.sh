@@ -20,3 +20,6 @@ beeline \
     -p haru1004\
     -f\
     $@
+#./submit-spark-thrift.sh bee_sql_minio.sql
+# ./submit-spark-thrift.sh + sql files
+# data from minio.develop.vsmart00.com
