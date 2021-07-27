@@ -1,0 +1,22 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: mongodb-source-connector2
+  labels:
+    # The strimzi.io/cluster label identifies the KafkaConnect instance
+    # in which to create this connector. That KafkaConnect instance
+    # must have the strimzi.io/use-connector-resources annotation
+    # set to true.
+    strimzi.io/cluster: mongodb-connect-cluster2
+spec:
+  class: io.debezium.connector.mongodb.MongoDbConnector
+  tasksMax: 3
+  config:
+    mongodb.hosts: mongo-cluster-rs0-0.mongo-cluster-rs0.mongodb.svc.cluster.local:27017
+    mongodb.name: mongo2
+    mongodb.user: 'haruband'
+    mongodb.password: 'haru1004'
+    snapshot.delay.ms: 500
+    database.whitelist: 'dummy'
+    collection.whitelist: 'dummy.profile'
+

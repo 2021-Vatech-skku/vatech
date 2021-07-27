@@ -1,0 +1,26 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: jee-user
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka
+spec:
+  authentication:
+    type: scram-sha-512
+  authorization:
+    type: simple
+    acls:
+      # Example consumer Acls for topic my-topic using consumer group my-group
+      - resource:
+          type: group
+          name: "*"
+          patternType: literal
+        operation: All
+#host: "*"
+      - resource:
+          type: topic
+          name: "*"
+          patternType: literal
+        operation: All
+#host: "*"
