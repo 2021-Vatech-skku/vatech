@@ -4,7 +4,7 @@ from pyspark import SparkContext, SQLContext
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
-from clever import getCleverSchema, getCleverTable
+from mongodb_clever import getCleverSchema, getCleverTable
 
 
 if __name__ == "__main__":
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     df0 = getCleverTable(df0,args.collection)
 
     df0.printSchema()
-    df0.show(truncate=False)
+    df0.show()
     print(df0.count())
 
     df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save(args.output)
