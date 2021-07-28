@@ -80,12 +80,15 @@ def getCleverSchema(collection):
     elif collection.endswith("patient"):
         schema = StructType(
             [
+                StructField("_id", StructType([StructField("oid", StringType(), False)]), False),
                 StructField("id", StringType(), True),
                 StructField("hospitalId", StringType(), True),
                 StructField("sex", StringType(), True),
                 StructField("name", StringType(), True),
                 StructField("address", StringType(), True),
-                StructField("birthDate", StringType(), False),
+                StructField(
+                    "birthDate", StringType(), False
+                ),
                 StructField("newOrExistingPatient", StringType(), True),
                 StructField("lastModifiedTime", IntegerType(), False),
             ]
@@ -100,7 +103,7 @@ def getCleverTable(df0, schema):
         df0 = df0.withColumn(
             "treats", explode(flatten(df0["content.tx.treatments.treats"]))
         )
-        df0 = df0.withColumn("name",df0["treats.name"])
+        df0 = df0.withColumn("name", df0["treats.name"])
         df0 = df0.withColumn("price", df0["treats.price"])
         df0 = df0.select(
             df0["oid"],
@@ -124,47 +127,6 @@ def getCleverTable(df0, schema):
         df0 = df0.withColumn("birth", uTimestampToDate(df0["birthDate.$date"]))
         df0 = df0.select(
             df0["oid"],
-            df0["id"].alias("patient"),
-            df0["hospitalId"].alias("hospital"),
-            df0["sex"],
-            df0["name"],
-            df0["address"],
-            df0["birth"],
-            df0["newOrExistingPatient"].alias("existing"),
-        )
-    return df0
-
-def mongodb_getCleverTable(df0, schema):
-    if schema.endswith("chart"):
-        df0 = df0.filter(df0["type"] == "TX")
-        df0 = df0.withColumn("date", uTimestampToDate(df0["date.$date"]))
-        df0 = df0.withColumn(
-            "treats", explode(flatten(df0["content.tx.treatments.treats"]))
-        )
-        df0 = df0.withColumn("name",df0["treats.name"])
-        df0 = df0.withColumn("price", df0["treats.price"])
-        df0 = df0.select(
-            df0["oid"],
-            df0["date"],
-            df0["hospitalId"].alias("hospital"),
-            df0["patient"],
-            df0["name"],
-            df0["price"],
-        ).orderBy("date", ascending=False)
-    elif schema.endswith("receipt"):
-        df0 = df0.withColumn("date", uTimestampToDate(df0["receiptDate.$date"]))
-        df0 = df0.select(
-            df0["oid"],
-            df0["date"],
-            df0["hospitalId"].alias("hospital"),
-            df0["patient"],
-            df0["newOrExistingPatient"].alias("existing"),
-        ).orderBy("date", ascending=False)
-    elif schema.endswith("patient"):
-        df0 = df0.withColumn("birthDate", from_json(df0.birthDate, StructType([StructField("$date", IntegerType(), False)])))
-        df0 = df0.withColumn("birth", uTimestampToDate(df0["birthDate.$date"]))
-        df0 = df0.select(
-            df0["_id"].alias("oid"),
             df0["id"].alias("patient"),
             df0["hospitalId"].alias("hospital"),
             df0["sex"],

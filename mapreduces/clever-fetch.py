@@ -30,7 +30,6 @@ def handleInsertOperation(
         "document", from_json(col("fullDocument"), getCleverSchema(collection))
     )
     df0 = df0.select(getCleverDocumentID(df0), "document.*")
-
     df0 = getCleverTable(df0, schema)
     df0.show(truncate=True)
 
@@ -134,7 +133,6 @@ if __name__ == "__main__":
                 s3url = s3url + "/day={:02d}".format(args.day)
 
     df0 = sq.read.format(args.inputformat).load(s3url)
-
     if "dump" in args.targets:
         handleDumpOperation(sq, df0)
 

@@ -4,7 +4,7 @@ from pyspark import SparkContext, SQLContext
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
-from mongodb_clever import getCleverSchema, getCleverTable
+from clever import getCleverSchema, getCleverTable
 
 
 if __name__ == "__main__":
@@ -16,7 +16,9 @@ if __name__ == "__main__":
     parser.add_argument("--username", help="mongodb username", default="haruband")
     parser.add_argument("--password", help="mongodb password", default="kk3249")
     parser.add_argument("--database", help="mongodb database", default="clever")
-    parser.add_argument("-c", "--collection", help="mongodb collection", default="dev0-patient")
+    parser.add_argument(
+        "--collection", help="mongodb collection", default="dev0-patient"
+    )
     parser.add_argument("-of", "--outputformat", help="output format", default="delta")
     parser.add_argument("-o", "--output", help="output path", default="delta")
     parser.add_argument(
@@ -69,13 +71,10 @@ if __name__ == "__main__":
         .schema(getCleverSchema(args.collection))
         .load()
     )
-    df0.printSchema()
-    df0.show(truncate=False)
-
-    df0 = getCleverTable(df0,args.collection)
-
+    df0 = df0.withColumn("oid", df0["_id.oid"])
+    if args.collection.endswith("patient"):
+        df0 = getCleverTable(df0, args.collection)
     df0.printSchema()
     df0.show()
-    print(df0.count())
 
-    df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save(args.output)
+    # df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save(args.output)
