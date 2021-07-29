@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--database", help="mongodb database", default="clever")
     parser.add_argument("-c", "--collection", help="mongodb collection", default="dev0-patient")
     parser.add_argument("-of", "--outputformat", help="output format", default="delta")
-    parser.add_argument("-o", "--output", help="output path", default="delta")
+    parser.add_argument("-ob", "--outputbucket", help="output bucket", default="test")
     parser.add_argument(
         "-m",
         "--minio",
@@ -77,4 +77,12 @@ if __name__ == "__main__":
     df0.printSchema()
     df0.show()
 
-    #df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save(args.output)
+    if args.collection.endswith("chart"):
+        coll="chart"
+    elif args.collection.endswith("receipt"):
+        coll="receipt"
+    elif args.collection.endswith("patient"):
+        coll="patient"
+
+    df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save("s3a://{}/{}".format(args.outputbucket, coll))
+    print("done!")
