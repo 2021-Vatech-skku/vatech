@@ -12,22 +12,15 @@ export function setup() {
 }
 
 export default function() {
-    var res = http.get(HOSTURL)
+    let params = {
+        timeout: "180s"
+    }
+    var res = http.get(HOSTURL, params)
     group('echoserver', function() {
         check(res, {
             "Status was 200": (res) => res.status == 200,
         })
     })
-    sleep(.1)
+    if (res.status != 200) errorRate.add(1)
+    sleep(1)
 }
-
-export function handleSummary(data) {
-    console.log('Preparing the end-of-test summary...');
-    const jsonpath = `./result/echoserver/json/${__ENV.ING_CTRL}.json`
-    const textpath = `./result/echoserver/text/${__ENV.ING_CTRL}`
-    var output = {}
-    output[jsonpath] = JSON.stringify(data)
-    output[textpath] = textSummary(data, { indent: ' ', enableColors: false })
-    output['stdout'] = textSummary(data, { indent: ' ', enableColors: true })
-    return output
-  }
