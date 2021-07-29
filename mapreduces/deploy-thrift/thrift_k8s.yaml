@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spark-thrift-server
+  labels:
+    foo: bar
+spec:
+  containers:
+  - name: spark-thrift-server
+    image: docker.io/wt358/spark-py:pyspark
+    args:
+      - /opt/spark/bin/spark-submit
+      - --master
+      - k8s://https://172.26.50.120:6443
+      - --class
+      - org.apache.spark.sql.hive.thriftserver.HiveThriftServer2
+      - --deploy-mode
+      - client
+      - --name
+      - spark-sql
+      - --hiveconf
+      - hive.server2.thrift.port 10000
+      - --hiveconf
+      - hive.server2.thrift.bind.host spark-thrift-server.spark.svc.cluster.local
+      - --conf
+      - spark.executor.instances=1
+      - --conf
+      - spark.executor.memory=1G
+      - --conf
+      - spark.driver.memory=1G
+      - --conf
+      - spark.executor.cores=1
+      - --conf
+      - spark.kubernetes.namespace=spark
+      - --conf
+      - spark.kubernetes.container.image=docker.io/wt358/spark-py:pyspark
+      - --conf
+      - spark.kubernetes.authenticate.driver.serviceAccountName=spark
+      - --conf
+      - spark.kubernetes.driver.pod.name=spark-thrift-server
+      - --conf
+      - spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension
+      - --conf
+      - spark.hadoop.fs.s3a.access.key=haruband
+      - --conf
+      - spark.hadoop.fs.s3a.secret.key=haru1004
+      - --conf
+      - spark.hadoop.fs.s3a.path.style.access=true
+      - --conf
+      - spark.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem
+      - --conf
+      - spark.hadoop.fs.s3a.endpoint=http://minio.it.vsmart00.com
+    ports:
+    - containerPort: 4040
+      name: spark-ui
+      protocol: TCP
+    - containerPort: 10000
+      name: spark-thrift
+      protocol: TCP
+  serviceAccount: spark
+  serviceAccountName: spark
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-thrift-server
+spec:
+  clusterIP: None
+  ports:
+  - name: spark-ui
+    port: 4040
+    protocol: TCP
+    targetPort: 4040
+  - name: spark-thrift
+    port: 10000
+    protocol: TCP
+    targetPort: 10000
+  selector:
+    foo: bar
+  sessionAffinity: None
+  type: ClusterIP
