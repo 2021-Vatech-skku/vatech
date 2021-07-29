@@ -62,8 +62,8 @@ spec:
         memory: 2Gi
         cpu: 500m
       limits:
-        memory: 6Gi
-        cpu: 2
+        memory: 2Gi
+        cpu: 500m
     volumeClaimTemplate:
       apiVersion: v1
       kind: persistentvolumeclaims

@@ -17,8 +17,14 @@ metadata:
   namespace: elasticsearch
   labels:
     app: elasticsearch
+  annotations:
+    common.k8s.elastic.co/controller-version: 1.6.0
 spec:
   version: 7.13.2
+  updateStrategy:
+    changeBudget:
+      maxSurge: 1
+      maxUnavailable: 1
   http:
     tls:
       selfSignedCertificate:
@@ -30,7 +36,7 @@ spec:
   - name: elasticsearch
     count: 3
     config:
-      
+    
     podTemplate:
       metadata:
         annotations:
@@ -50,8 +56,8 @@ spec:
         - name: elasticsearch
           resources:
             limits:
-              memory: 6Gi
-              cpu: 2
+              memory: 2Gi
+              cpu: 500m
             requests:
               memory: 2Gi
               cpu: 500m
