@@ -30,7 +30,6 @@ def handleInsertOperation(
         "document", from_json(col("fullDocument"), getCleverSchema(collection))
     )
     df0 = df0.select(getCleverDocumentID(df0), "document.*")
-
     df0 = getCleverTable(df0, schema)
     df0.show(truncate=True)
 
@@ -134,42 +133,6 @@ if __name__ == "__main__":
                 s3url = s3url + "/day={:02d}".format(args.day)
 
     df0 = sq.read.format(args.inputformat).load(s3url)
-    '''
-    df0.printSchema()
-    df0 = df0.filter(df0["operationType"] == "insert")
-    df0 = df0.withColumn(
-        "document", from_json(col("fullDocument"), getCleverSchema(args.collection))
-    )
-    df0 = df0.select("document.*")
-    df0.printSchema()
-
-    if args.target == "treats":
-        df0 = getCleverChartTreats(df0)
-        name_list = [(row.name) for row in df0.select("name").collect()]
-        price_dic = {
-            row.name: row.price for row in df0.select("name", "price").collect()
-        }
-        df0 = genFakeChartData(df0, name_list, price_dic)
-    elif args.target == "receipt":
-        df0 = getCleverReceipts(df0)
-        exiting_dic = {row.patient: 2 for row in df0.select("patient").collect()}
-        df0 = genFakeReceiptData(df0, exiting_dic)
-    df0.printSchema()
-    df0.show(truncate=False)
-    name_list = [(row.name) for row in df0.select("name").collect()]
-
-    #df0.orderBy("date",ascending=False).show(truncate=False)
-    print(df0.count())
-    if args.partitions:
-        df0.coalesce(1).write.partitionBy(args.partitions.split(",")).format(
-            args.outputformat
-        ).mode("overwrite").save(args.output)
-    else:
-        df0.coalesce(1).write.format(args.outputformat).mode("overwrite").save(
-            args.output
-        )
-    '''
-
     if "dump" in args.targets:
         handleDumpOperation(sq, df0)
 
