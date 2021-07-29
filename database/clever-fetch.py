@@ -23,26 +23,32 @@ def handleDumpOperation(sq, df0):
 
 
 def handleInsertOperation(
-    sq, df0, collection, schema, partitions, outputformat, output
+    sq, df0, collection, schema, partitions, outputformat, outputbucket
 ):
     df0 = df0.filter(df0.fullDocument.isNotNull())
     df0 = df0.withColumn(
         "document", from_json(col("fullDocument"), getCleverSchema(collection))
     )
     df0 = df0.select(getCleverDocumentID(df0), "document.*")
-    df0.printSchema()
-    df0.show()
 
     df0 = getCleverTable(df0, schema)
     df0.printSchema()
     df0.show(truncate=True)
 
+    if collection.endswith("chart"):
+        coll="chart"
+    elif collection.endswith("receipt"):
+        coll="receipt"
+    elif collection.endswith("patient"):
+        coll="patient"
+
     if args.partitions:
-        df0.write.partitionBy(partitions.split(",")).format(outputformat).mode(
-            "append"
-        ).save(output)
+        df0.write.partitionBy(partitions.split(",")).format(outputformat)\
+            .mode("append").save("s3a://{}/{}".format(outputbucket,coll))
     else:
-        df0.write.format(outputformat).mode("append").save(output)
+        df0.write.format(outputformat).mode("append").save("s3a://{}/{}".format(outputbucket,coll))
+    
+    print("done!!")
 
 
 def handleUpdateOperation(
@@ -87,7 +93,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--targets", help="output targets", default="insert")
     parser.add_argument("-s", "--schema", help="output schema")
     parser.add_argument("-of", "--outputformat", help="output format", default="delta")
-    parser.add_argument("-o", "--output", help="output path", default="delta")
+    parser.add_argument("-ob", "--outputbucket", help="output path", default="test")
     parser.add_argument("-p", "--partitions", help="output partitions")
     parser.add_argument(
         "-u",
@@ -149,7 +155,7 @@ if __name__ == "__main__":
             args.schema if args.schema else args.collection,
             args.partitions,
             args.outputformat,
-            args.output,
+            args.outputbucket,
         )
     if "update" in args.targets:
         handleUpdateOperation(
