@@ -1,10 +1,11 @@
 import os
+import argparse
 from datetime import datetime, date
 from pyspark import SparkContext, SQLContext
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 from pyspark.sql.types import *
-from pyspark.sql.functions import from_json, flatten, explode, udf
+from pyspark.sql.functions import from_json, flatten, explode, udf, count, last
 
 timetostr = udf(lambda x: datetime.fromtimestamp(x).strftime("%Y%m%d") if type(x) is int else None)
 
@@ -25,7 +26,8 @@ schema = StructType(
       ]), False),
       StructField("hospitalId", StringType(), False),
       StructField("date", StructType([StructField("$date", IntegerType(), False)]), False),
-      StructField("patient", StringType(), False)
+      StructField("patient", StringType(), False),
+      StructField("lastModifiedTime", IntegerType(), False),
     ]
 )
 
@@ -40,29 +42,65 @@ sc.set("spark.hadoop.fs.s3a.endpoint", "https://minio.develop.vsmart00.com")
 spark = SparkSession.builder.appName("Chart ETL").config(conf=sc).getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
+url = "s3a://mongodb/topics/clever.dev0-chart"
+parser = argparse.ArgumentParser()
+parser.add_argument("-y", "--year", help="target year", type=int, default=0)
+parser.add_argument("-m", "--month", help="target month", type=int, default=0)
+parser.add_argument("-d", "--day", help="target day", type=int, default=0)
+args = parser.parse_args()
+if args.year > 0:
+  url = url + "/year={:04d}".format(args.year)
+  if args.month > 0:
+    url = url + "/month={:02d}".format(args.month)
+    if args.day > 0:
+      url = url + "/day={:02d}".format(args.day)
 df = spark.read.format("json").load("s3a://mongodb/topics/clever.dev0-chart")
 
-df = df.filter(df.operationType == "insert").select("fullDocument")
-df = df.withColumn("test", from_json(df.fullDocument, schema)).select("test.*")
-df = df.withColumn("content", explode(flatten("content.tx.treatments.treats")))
-df = df.withColumn("date", timetostr(df["date.$date"]))
-df = df.select(
-  df["_id.$oid"].alias("oid"), 
-  df["content.name"].alias("name"), 
-  df["content.price"].alias("price"), 
-  df["hospitalId"].alias("hospital"), 
-  "date", 
-  "patient"
+df0 = df.filter(df.operationType == "insert").select("fullDocument")
+df0 = df0.withColumn("test", from_json(df0.fullDocument, schema)).select("test.*")
+df0 = df0.withColumn("content", explode(flatten("content.tx.treatments.treats")))
+df0 = df0.withColumn("date", timetostr(df0["date.$date"]))
+df0 = df0.withColumn("lastModifiedTime", timetostr(df0["lastModifiedTime"]))
+df0 = df0.select(
+  df0["_id.$oid"].alias("oid"), 
+  df0["content.name"].alias("name"), 
+  df0["content.price"].alias("price"), 
+  df0["hospitalId"].alias("hospital"), 
+  df0["date"], 
+  df0["patient"],
+  df0["lastModifiedTime"]
+)
+df0.show(10, truncate=False)
+df0.printSchema()
+
+df1 = df.filter(df.operationType == "update").select("fullDocument")
+df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("test.*")
+df1.sort("lastModifiedTime").groupBy("_id.$oid").agg(last("lastModifiedTime"), last("_id.$oid"), last("date"), last("patient")).show()
+df1 = df1.withColumn("content", explode(flatten("content.tx.treatments.treats")))
+df1 = df1.withColumn("date", timetostr(df1["date.$date"]))
+df1 = df1.withColumn("lastModifiedTime", timetostr(df1["lastModifiedTime"]))
+df1 = df1.select(
+  df1["_id.$oid"].alias("oid"), 
+  df1["content.name"].alias("name"), 
+  df1["content.price"].alias("price"), 
+  df1["hospitalId"].alias("hospital"), 
+  df1["date"], 
+  df1["patient"],
+  df1["lastModifiedTime"]
 )
 
-df.show(10, truncate=False)
-df.printSchema()
-tmp = df.toPandas()
+# df0.select("hospitalId", "_id", "lastModifiedTime").sort("lastModifiedTime").groupBy("_id.$oid").agg(count("hospitalId"), last("lastModifiedTime")).sort("$oid").show()
+df1.show(10, truncate=False)
+df1.printSchema()
+
+'''
+tmp = df0.toPandas()
 spark.stop()
 
 # Create new sparksession to use another s3 endpoint
 sc.set("spark.hadoop.fs.s3a.endpoint", "http://minio.it.vsmart00.com")
 spark = SparkSession.builder.appName("Chart ETL").config(conf=sc).getOrCreate()
-df = spark.createDataFrame(tmp)
-df.coalesce(1).write.format("delta").mode("overwrite").save("s3a://songhyun/chart")
+df0 = spark.createDataFrame(tmp)
+df0.coalesce(1).write.format("delta").mode("overwrite").save("s3a://songhyun/chart")
 print("Uploaded to K8S")
+'''
