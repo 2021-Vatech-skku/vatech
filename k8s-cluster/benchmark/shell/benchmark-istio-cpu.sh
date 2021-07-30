@@ -2,7 +2,7 @@ APP=${1:-nginx}
 VUS=${2:-3000}
 DURATION=${3:-3m}
 
-BENCHMARK_PATH=/Users/gmlrhks95/vatech/k8s-cluster/benchmark
+BENCHMARK_PATH=.
 MANIFESTS_PATH=${BENCHMARK_PATH}/deploy/manifests
 VALUE_FILE=${MANIFESTS_PATH}/istio/charts/gateways/istio-ingress/values.yaml
 

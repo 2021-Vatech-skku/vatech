@@ -1,7 +1,8 @@
+# !/bin/bash
+# Ingress controller가 설치된 채로 쓰는 spike test
 APP=spike
 MANIFESTS_PATH=deploy/manifests
 BENCHMARK_SCRIPT=scripts/${APP}.js
-DEPLOYMENT_PATH=${MANIFESTS_PATH}/${APP}/deployment.yaml
 SCRIPT_BASENAME=${BENCHMARK_SCRIPT##*/}
 SCRIPT_BASENAME=${SCRIPT_BASENAME%.js}
 PWD=`pwd`
@@ -10,9 +11,9 @@ PWD=`pwd`
 echo "Starting benchmark using ${BENCHMARK_SCRIPT} with vus ${VUS}, duration ${DURATION}."
 
 setup() {    
-    kubectl apply -f ${MANIFESTS_PATH}/${APP}/ -n benchmark > /dev/null
+    kubectl apply -f ${MANIFESTS_PATH}/workload/${APP}/ -n benchmark > /dev/null
     echo "Waiting for deployment ready.."
-    kubectl wait -f ${MANIFESTS_PATH}/${APP}/deployment.yaml --for condition=available --timeout=3m > /dev/null
+    kubectl wait -f ${MANIFESTS_PATH}/workload/${APP}/deployment.yaml --for condition=available --timeout=3m > /dev/null
     sleep 3
 }
 
@@ -25,7 +26,7 @@ nginx_bench() {
         -e HOST=$HOST -e ING_CTRL=nginx \
         --insecure-skip-tls-verify
 
-#    kubectl delete -f ${MANIFESTS_PATH}/${APP}/deployment.yaml --grace-period=20
+    kubectl delete -f ${MANIFESTS_PATH}/workload/${APP}/deployment.yaml --grace-period=20
 }
 
 haproxy_bench() {
@@ -37,7 +38,7 @@ haproxy_bench() {
         -e HOST=$HOST -e ING_CTRL=haproxy \
         --insecure-skip-tls-verify
 
-#    kubectl delete -f ${MANIFESTS_PATH}/${APP}/deployment.yaml --grace-period=20
+    kubectl delete -f ${MANIFESTS_PATH}/workload/${APP}/deployment.yaml --grace-period=20
 }
 
 istio_bench() {
@@ -49,7 +50,7 @@ istio_bench() {
         -e HOST=$HOST -e ING_CTRL=istio \
         --insecure-skip-tls-verify
 
-#    kubectl delete -f ${MANIFESTS_PATH}/${APP}/deployment.yaml --grace-period=20
+    kubectl delete -f ${MANIFESTS_PATH}/workload/${APP}/deployment.yaml --grace-period=20
 }
 
 case $1 in
@@ -71,4 +72,4 @@ case $1 in
     ;;
 esac
 
-kubectl delete -f ${MANIFESTS_PATH}/${APP} -n benchmark >> /dev/null
+kubectl delete -f ${MANIFESTS_PATH}/workload/${APP} -n benchmark >> /dev/null

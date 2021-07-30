@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: canary-v1
+  labels:
+    name: canary-v1
+spec:
+  containers:
+  - name: canary-v1
+    image: gmlrhks95/canary-v1
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: v1-svc
+spec:
+  selector:
+    name: canary-v1
+  ports:
+  - port: 80
+    targetPort: 80
