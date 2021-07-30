@@ -11,7 +11,7 @@ args = {
       'retry_delay' : timedelta(seconds=10),
 }
 
-dag = DAG('ETL_workflow', schedule_interval = '@daily', default_args = args)
+dag = DAG('ETL_workflow_daily', schedule_interval = '@daily', default_args = args, max_active_runs=1)
 homepath = "/usr/local/airflow/"
 settings = "export SPARK_HOME=/usr/local/airflow/spark && export PATH=$PATH:$SPARK_HOME/bin && "
 

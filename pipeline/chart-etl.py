@@ -75,7 +75,7 @@ df0.printSchema()
 
 df1 = df.filter(df.operationType == "update").select("fullDocument")
 df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("test.*")
-df1.sort("lastModifiedTime").groupBy("_id.$oid").agg(last("lastModifiedTime"), last("_id.$oid"), last("date"), last("patient")).show()
+df1.sort("lastModifiedTime").groupBy("_id.$oid").agg(map(lambda x: last(x))).show()
 df1 = df1.withColumn("content", explode(flatten("content.tx.treatments.treats")))
 df1 = df1.withColumn("date", timetostr(df1["date.$date"]))
 df1 = df1.withColumn("lastModifiedTime", timetostr(df1["lastModifiedTime"]))
