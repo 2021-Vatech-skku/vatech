@@ -80,15 +80,12 @@ def getCleverSchema(collection):
     elif collection.endswith("patient"):
         schema = StructType(
             [
-                StructField("_id", StructType([StructField("oid", StringType(), False)]), False),
                 StructField("id", StringType(), True),
                 StructField("hospitalId", StringType(), True),
                 StructField("sex", StringType(), True),
                 StructField("name", StringType(), True),
                 StructField("address", StringType(), True),
-                StructField(
-                    "birthDate", StringType(), False
-                ),
+                StructField("birthDate", StringType(), False),
                 StructField("newOrExistingPatient", StringType(), True),
                 StructField("lastModifiedTime", IntegerType(), False),
             ]
@@ -103,7 +100,7 @@ def getCleverTable(df0, schema):
         df0 = df0.withColumn(
             "treats", explode(flatten(df0["content.tx.treatments.treats"]))
         )
-        df0 = df0.withColumn("name", df0["treats.name"])
+        df0 = df0.withColumn("name",df0["treats.name"])
         df0 = df0.withColumn("price", df0["treats.price"])
         df0 = df0.select(
             df0["oid"],

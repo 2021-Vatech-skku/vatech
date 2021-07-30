@@ -1,0 +1,23 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: mongodb-source-connector4
+  namespace: kafka
+  labels:
+    # The strimzi.io/cluster label identifies the KafkaConnect instance
+    # in which to create this connector. That KafkaConnect instance
+    # must have the strimzi.io/use-connector-resources annotation
+    # set to true.
+    strimzi.io/cluster: mongodb-connect-cluster4
+spec:
+  class: com.mongodb.kafka.connect.MongoSourceConnector
+  tasksMax: 1
+  config:
+    connection.uri: "mongodb://haruband:haru1004@mongo.it.vsmart00.com"
+    database: jee
+    copy.existing: true
+    #output.format.value: schema
+    publish.full.document.only: false
+    change.stream.full.document: updateLookup
+
+

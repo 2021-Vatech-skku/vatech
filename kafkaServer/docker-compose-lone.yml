@@ -1,0 +1,46 @@
+version: '2.1'
+services:                    #생성할 서비스 목록
+  zookeeper:
+    hostname: lonezk
+    image: zookeeper:3.4.9            #image file, 없으면 hub에서 자동으로 가져옴.
+    ports:
+      - "2184:2184"
+    environment:                      #환경 변수 설정
+        ZOO_MY_ID: 4
+        ZOO_PORT: 2184
+        ZOO_SERVER: server.4=lonezk:2888:3888
+    volumes:                          #디렉토리 마운트file
+      - ./lonekafka/lonezk/data:/data
+      - ./lonekafka/lonezk/datalog:/datalog
+
+
+  kafka:
+    hostname: lonekafka
+    image: confluentinc/cp-kafka:5.5.1
+    ports:
+      - "9095:9095"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://lonekafka:19095,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      #KAFKA_ADVERTISED_HOST_NAME: host.docker.internal
+      KAFKA_ZOOKEEPER_CONNECT: "lonezk:2184"
+      KAFKA_BROKER_ID: 4
+      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    volumes:
+      - ./lonekafka/data:/var/lib/kafka/data
+    depends_on:               #lonezk 가 생성된 후에 lonekafka를 설치한다.
+      - lonezk
+
+  kafdrop:         #kafka broker를 모니터링하기 위한 UI
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9001:9001"
+    environment:
+      KAFKA_BROKERCONNECT: "lonekafka:19095"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+      SERVER_PORT: 9001
+      MANAGEMENT_SERVER_PORT: 9001
+    depends_on:
+      - lonekafka 

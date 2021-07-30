@@ -49,14 +49,13 @@ def getCleverSchema(collection):
         )
         schema = StructType(
             [
+                StructField("_id", StringType(), False),
                 StructField("hospitalId", StringType(), False),
                 StructField("patient", StringType(), False),
                 StructField("type", StringType(), False),
+                StructField("date", StringType(),False),
                 StructField(
-                    "date", StructType([StructField("$date", IntegerType(), False)])
-                ),
-                StructField(
-                    "content", StructType([StructField("tx", txSchema, False)]), False
+                    "content", StructType([StructField("tx",txSchema,False)]),False
                 ),
                 StructField("lastModifiedTime", IntegerType(), False),
             ]
@@ -65,12 +64,10 @@ def getCleverSchema(collection):
     elif collection.endswith("receipt"):
         schema = StructType(
             [
+                StructField("_id", StringType(), True),
                 StructField("hospitalId", StringType(), False),
                 StructField("patient", StringType(), False),
-                StructField(
-                    "receiptDate",
-                    StructType([StructField("$date", IntegerType(), False)]),
-                ),
+                StructField("receiptDate", StringType(), False),
                 StructField("status", StringType(), False),
                 StructField("newOrExistingPatient", StringType(), False),
                 StructField("lastModifiedTime", IntegerType(), False),
@@ -97,6 +94,7 @@ def getCleverSchema(collection):
 def getCleverTable(df0, coll):
     if coll.endswith("chart"):
         df0 = df0.filter(df0["type"] == "TX")
+        df0 = df0.withColumn("date", from_json(df0.date, StructType([StructField("$date", IntegerType(), False)])))
         df0 = df0.withColumn("date", uTimestampToDate(df0["date.$date"]))
         df0 = df0.withColumn(
             "treats", explode(flatten(df0["content.tx.treatments.treats"]))
@@ -104,7 +102,7 @@ def getCleverTable(df0, coll):
         df0 = df0.withColumn("name", df0["treats.name"])
         df0 = df0.withColumn("price", df0["treats.price"])
         df0 = df0.select(
-            df0["oid"],
+            df0["_id"].alias("oid"),
             df0["date"],
             df0["hospitalId"].alias("hospital"),
             df0["patient"],
@@ -112,9 +110,10 @@ def getCleverTable(df0, coll):
             df0["price"],
         ).orderBy("date", ascending=False)
     elif coll.endswith("receipt"):
+        df0 = df0.withColumn("receiptDate", from_json(df0.receiptDate, StructType([StructField("$date", IntegerType(), False)])))
         df0 = df0.withColumn("date", uTimestampToDate(df0["receiptDate.$date"]))
         df0 = df0.select(
-            df0["oid"],
+            df0["_id"].alias("oid"),
             df0["date"],
             df0["hospitalId"].alias("hospital"),
             df0["patient"],
