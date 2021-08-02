@@ -23,24 +23,17 @@ def handleDumpOperation(sq, df0):
 
 
 def handleInsertOperation(
-    sq, df0, collection, schema, partitions, outputformat, outputbucket
+    sq, df0, coll, schema, partitions, outputformat, outputbucket
 ):
     df0 = df0.filter(df0.fullDocument.isNotNull())
     df0 = df0.withColumn(
-        "document", from_json(col("fullDocument"), getCleverSchema(collection))
+        "document", from_json(col("fullDocument"), getCleverSchema(coll))
     )
     df0 = df0.select(getCleverDocumentID(df0), "document.*")
 
     df0 = getCleverTable(df0, schema)
     df0.printSchema()
     df0.show(truncate=True)
-
-    if collection.endswith("chart"):
-        coll="chart"
-    elif collection.endswith("receipt"):
-        coll="receipt"
-    elif collection.endswith("patient"):
-        coll="patient"
 
     if args.partitions:
         df0.write.partitionBy(partitions.split(",")).format(outputformat)\
@@ -52,11 +45,11 @@ def handleInsertOperation(
 
 
 def handleUpdateOperation(
-    sq, df0, collection, schema, partitions, outputformat, output
+    sq, df0, coll, schema, partitions, outputformat, outputbucket
 ):
     df0 = df0.filter(df0.fullDocument.isNotNull())
     df0 = df0.withColumn(
-        "document", from_json(col("fullDocument"), getCleverSchema(collection))
+        "document", from_json(col("fullDocument"), getCleverSchema(coll))
     )
     df0 = df0.select(getCleverDocumentID(df0), "document.*")
     df0 = df0.groupBy("oid").agg(
@@ -67,12 +60,20 @@ def handleUpdateOperation(
     )
 
     df0 = getCleverTable(df0, schema)
+
+    df0 = df0.groupBy("oid").agg(
+        *map(
+            lambda x: last(df0[x]).alias(x),
+            filter(lambda x: x != "oid", df0.schema.names),
+        )
+    )
     df0.show(truncate=False)
 
-    dft = DeltaTable.forPath(sq, output)
-    dft.alias("origin").merge(
-        df0.alias("update"), "origin.oid = update.oid"
-    ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+    dft = DeltaTable.forPath(sq, "s3a://{}/{}".format(outputbucket,coll))
+    dft.alias("origin").merge(df0.alias("update"), "origin.oid = update.oid")\
+        .whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+    
+    print("done!!")
 
 
 if __name__ == "__main__":
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--targets", help="output targets", default="insert")
     parser.add_argument("-s", "--schema", help="output schema")
     parser.add_argument("-of", "--outputformat", help="output format", default="delta")
-    parser.add_argument("-ob", "--outputbucket", help="output path", default="test")
+    parser.add_argument("-ob", "--outputbucket", help="output path", default="test2")
     parser.add_argument("-p", "--partitions", help="output partitions")
     parser.add_argument(
         "-u",
@@ -144,6 +145,13 @@ if __name__ == "__main__":
 
     df0 = sq.read.format(args.inputformat).load(s3url)
 
+    if args.collection.endswith("chart"):
+        coll="chart"
+    elif args.collection.endswith("receipt"):
+        coll="receipt"
+    elif args.collection.endswith("patient"):
+        coll="patient"
+
     if "dump" in args.targets:
         handleDumpOperation(sq, df0)
 
@@ -151,8 +159,8 @@ if __name__ == "__main__":
         handleInsertOperation(
             sq,
             df0.filter(df0["operationType"] == "insert"),
-            args.collection,
-            args.schema if args.schema else args.collection,
+            coll,
+            args.schema if args.schema else coll,
             args.partitions,
             args.outputformat,
             args.outputbucket,
@@ -161,9 +169,9 @@ if __name__ == "__main__":
         handleUpdateOperation(
             sq,
             df0.filter(df0["operationType"] == "update"),
-            args.collection,
-            args.schema if args.schema else args.collection,
+            coll,
+            args.schema if args.schema else coll,
             args.partitions,
             args.outputformat,
-            args.output,
+            args.outputbucket,
         )

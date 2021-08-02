@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from pyspark.sql.types import *
-from pyspark.sql.functions import udf, col, from_json, flatten, explode
+from pyspark.sql.functions import udf, flatten, explode
 
 
 uTimestampToDate = udf(
@@ -85,7 +85,10 @@ def getCleverSchema(collection):
                 StructField("sex", StringType(), True),
                 StructField("name", StringType(), True),
                 StructField("address", StringType(), True),
-                StructField("birthDate", StringType(), False),
+                StructField(
+                    "birthDate",
+                    StructType([StructField("$date", IntegerType(), False)]),
+                ),
                 StructField("newOrExistingPatient", StringType(), True),
                 StructField("lastModifiedTime", IntegerType(), False),
             ]
@@ -120,7 +123,6 @@ def getCleverTable(df0, schema):
             df0["newOrExistingPatient"].alias("existing"),
         ).orderBy("date", ascending=False)
     elif schema.endswith("patient"):
-        df0 = df0.withColumn("birthDate", from_json(df0.birthDate, StructType([StructField("$date", IntegerType(), False)])))
         df0 = df0.withColumn("birth", uTimestampToDate(df0["birthDate.$date"]))
         df0 = df0.select(
             df0["oid"],
