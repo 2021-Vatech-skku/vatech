@@ -8,10 +8,10 @@ import dev_data
 #bootstrap_servers = ["localhost:9095"]
 
 # 카프카 토픽
-str_topic_name    = 'jee.clever.dev0-patient.10'
+str_topic_name    = 'jee.clever.dev0-patient.filtered.test'
 
 # 카프카 소비자 group 생성
-str_group_name = 'g7'
+str_group_name = 'g9'
 
 #-------------comsumption data from Faker-----------
 consumer = KafkaConsumer(str_topic_name,         #kafka topic name
