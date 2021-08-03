@@ -64,7 +64,7 @@ for message in consumer:
      oldFullDocument = tempData1["payload"]["fullDocument"]   #tempData1["payload"]["fullDocument"] == json string
      newStr = json.loads(oldFullDocument)     #json string --> dict
      newStr["name"] = "*****"                 # replace value of dict whose key is "name"
-     tempData1["payload"]["fullDocument"] = json.dumps(newStr)  # fullDocument dict --> json string                           
+     tempData1["payload"]["fullDocument"] = json.dumps(newStr)  # fullDocument dict --> json string && replace with old one                   
      result = tempData1
      print(result)
      producer.send("jee.clever.dev0-patient.filtered.test",result,message.key)
