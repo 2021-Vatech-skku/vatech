@@ -1,0 +1,31 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: minio-sink-connector-j1
+  namespace: kafka
+  labels: 
+    strimzi.io/cluster: kafkaconnect
+spec:
+  class: io.confluent.connect.s3.S3SinkConnector
+  tasksMax: 1
+  config:
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    format.class: io.confluent.connect.s3.format.json.JsonFormat
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter.schemas.enable: false
+    locale: ko-KR
+    partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
+    s3.bucket.name: jee-test
+    s3.part.size: 5242880
+    flush.size: 5
+    schema.compatibility: NONE
+    schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
+    store.url: "http://minio.minio.svc.cluster.local:80"
+    timezone: Asia/Seoul
+    topics: jee.clever.dev0-chart.test,jee.clever.dev0-receipt.test,jee.clever.dev0-patient.test
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    value.schemas.enable: false
+  
+
+
+
