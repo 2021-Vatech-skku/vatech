@@ -14,7 +14,7 @@ args = {
 
 with DAG(
     dag_id='elastic_faker_example', 
-    schedule_interval=None,
+    schedule_interval='@daily',
     default_args=args,
     tags=['faker'],
     ) as dag:
