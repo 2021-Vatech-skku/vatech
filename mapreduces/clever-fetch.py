@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+from datetime import datetime
 from pyspark import SparkContext, SQLContext
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
@@ -41,7 +42,7 @@ def handleInsertOperation(
     else:
         df0.write.format(outputformat).mode("append").save("s3a://{}/{}".format(outputbucket,coll))
     
-    print("done!!")
+    print("insert done!!")
 
 
 def handleUpdateOperation(
@@ -73,7 +74,7 @@ def handleUpdateOperation(
     dft.alias("origin").merge(df0.alias("update"), "origin.oid = update.oid")\
         .whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
     
-    print("done!!")
+    print("update done!!")
 
 
 if __name__ == "__main__":
@@ -84,17 +85,17 @@ if __name__ == "__main__":
         help="input format",
         default="json",
     )
-    parser.add_argument("-b", "--bucket", help="target bucket", default="mongodb")
+    parser.add_argument("-b", "--bucket", help="target bucket", default="skku-sanhak")
     parser.add_argument(
-        "-c", "--collection", help="target collection", default="clever.dev0-chart"
+        "-c", "--collection", help="target collection", default="jee.clever.dev0-chart.test"
     )
-    parser.add_argument("-y", "--year", help="target year", type=int, default=0)
-    parser.add_argument("-m", "--month", help="target month", type=int, default=0)
-    parser.add_argument("-d", "--day", help="target day", type=int, default=0)
+    parser.add_argument("-y", "--year", help="target year", type=int, default=datetime.today().year)
+    parser.add_argument("-m", "--month", help="target month", type=int, default=datetime.today().month)
+    parser.add_argument("-d", "--day", help="target day", type=int, default=datetime.today().day)
     parser.add_argument("-t", "--targets", help="output targets", default="insert")
     parser.add_argument("-s", "--schema", help="output schema")
     parser.add_argument("-of", "--outputformat", help="output format", default="delta")
-    parser.add_argument("-ob", "--outputbucket", help="output path", default="test2")
+    parser.add_argument("-ob", "--outputbucket", help="output path", default="test")
     parser.add_argument("-p", "--partitions", help="output partitions")
     parser.add_argument(
         "-u",
@@ -145,11 +146,11 @@ if __name__ == "__main__":
 
     df0 = sq.read.format(args.inputformat).load(s3url)
 
-    if args.collection.endswith("chart"):
+    if "chart" in args.collection:
         coll="chart"
-    elif args.collection.endswith("receipt"):
+    if "receipt" in args.collection:
         coll="receipt"
-    elif args.collection.endswith("patient"):
+    if "patient" in args.collection:
         coll="patient"
 
     if "dump" in args.targets:
