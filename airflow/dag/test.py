@@ -27,6 +27,7 @@ with DAG(
         in_cluster=True,
         task_id="elastic-faker",
         get_logs=True,
+        dag=dag,
     )
 
     test_echo = KubernetesPodOperator(
@@ -39,6 +40,7 @@ with DAG(
         cmds=['echo'],
         arguments=['Hello World!'],
         get_logs=True,
+        dag=dag,
     )
 
     test_elastic_faker >> test_echo
