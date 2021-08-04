@@ -43,4 +43,4 @@ with DAG(
         dag=dag,
     )
 
-    test_elastic_faker >> test_echo
+    test_echo >> test_elastic_faker
