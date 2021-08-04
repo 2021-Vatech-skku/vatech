@@ -51,7 +51,7 @@ parser.add_argument("-y", "--year", help="target year", type=int, default=0)
 parser.add_argument("-m", "--month", help="target month", type=int, default=0)
 parser.add_argument("-d", "--day", help="target day", type=int, default=0)
 args = parser.parse_args()
-url = "s3a://mongodb/topics/clever.dev0-chart"
+url = "s3a://jee-test/topics/jee.clever.dev0-chart.test"
 if args.year > 0:
   url = url + "/year={:04d}".format(args.year)
   if args.month > 0:
@@ -103,4 +103,5 @@ df = spark.read.format("delta").load("s3a://test/sh/chart")
 df = df.join(df1, df["oid"] == df1["oid"], "leftanti")
 df2 = df.union(df1)
 df2.coalesce(1).write.format("delta").mode("overwrite").save("s3a://test/sh/chart")
+df2.show(df2.count())
 print("Uploaded.")

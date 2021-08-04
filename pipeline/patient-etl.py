@@ -35,7 +35,7 @@ sc.set("spark.hadoop.fs.s3a.endpoint", "https://minio.develop.vsmart00.com")
 spark = SparkSession.builder.appName("Patient ETL").config(conf=sc).getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
-url = "s3a://mongodb/topics/clever.dev0-patient"
+url = "s3a://jee-test/topics/jee.clever.dev0-patient.test"
 mode = "overwrite"
 parser = argparse.ArgumentParser()
 parser.add_argument("-y", "--year", help="target year", type=int, default=0)
@@ -94,6 +94,7 @@ df = spark.read.format("delta").load("s3a://test/sh/patient")
 df = df.join(df1, df["patient"] == df1["patient"], "leftanti")
 df2 = df.union(df1)
 df2.coalesce(1).write.format("delta").mode("overwrite").save("s3a://test/sh/patient")
+df2.show()
 print("Uploaded.")
 
 '''
