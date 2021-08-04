@@ -1,0 +1,142 @@
+1627288797498:exit
+1627289334749:set scalaVersion := "2.11.6"
+1627289357093:exit
+1627289563115:#!/bin/bash # cd /scalaws set scalaVersion := "2.13.6" set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0" set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0" set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0" set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0" set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2" set initialCommands :="" set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration" session save
+1627289606577:set scalaVersion := "2.13.6" set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0" set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0" set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0" set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0" set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2" set initialCommands :="" set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration" session save
+1627289648689:set scalaVersion := "2.13.6"
+1627289650313:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627289650871:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627289651160:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627289651412:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627289651633:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627289651856:set initialCommands :=""
+1627289652029:set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627289652182:session save
+1627289755402:set scalaVersion := "2.13.6"
+1627289755571:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627289755705:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627289755806:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627289755911:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627289756002:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627289756093:set initialCommands :=""
+1627289756193:set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627289756270:session save
+1627289756355:compile
+1627289844150:set scalaVersion := "2.11.4"
+1627289850169:session save
+1627289869254:compile
+1627289978257:set scalaVersion := "2.13.6"
+1627289979904:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627289980008:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627289980107:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627289980202:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627289980284:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627289980369:set initialCommands :=""
+1627289980474:set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627289980549:session save
+1627289980636:compile
+1627344017117:console
+1627344110093:set scalaVersion := "2.13.6"
+1627344121358:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627344129140:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627344136285:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627344144357:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627344151439:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627344428441:set initialCommands := "import org.apache.kafka.streams.scala.StreamBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue,StreamsConfig, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicaitConversions._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627344436627:compile
+1627344454119:run
+1627344472431:console
+1627344526314:set initialCommands := "import org.apache.kafka.streams.scala.StreamBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue,StreamsConfig}, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicaitConversions._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627344530760:console
+1627344611938:set name := "kafkastream"
+1627344619285:set scalaVersion := "2.13.6"
+1627344625411:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627344633603:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627344638619:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627344643948:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627344649415:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627344698722:import org.apache.kafka.streams.scala.StreamBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue,StreamsConfig}, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicaitConversions._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration
+1627344735852:set initialCommands:="import org.apache.kafka.streams.scala.StreamBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue,StreamsConfig}, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicaitConversions._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627344745278:session save
+1627344748159:console
+1627344795703:set name := "kafkastream"
+1627344801112:set scalaVersion := "2.13.6"
+1627344807495:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627344813580:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627344820596:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627344825898:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627344841416:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627344886989:set initialCommands:="import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue,StreamsConfig}, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicitConversions._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration"
+1627344892185:session save
+1627344894593:console
+1627436241060:set name :="kafkastreams"
+1627436258455:sert scalaVersion := "2.13.6"
+1627436270755:set scalaVersion := "2.13.6"
+1627436279204:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627436285161:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627436290623:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627436295583:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627436301602:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627436307404:set libraryDependencies += "org.json4s" % "json4s-jackson_2.13" % "4.0.3"
+1627436312696:session save
+1627436317011:compile
+1627436816647:set initial
+1627436820447:set --help
+1627436828129:set -help
+1627436863193:set initial command
+1627436961894:set initalCommands := ""
+1627436985058:set initialCommands :=""
+1627437169909:set initialCommands :="import com.fasterxml.jackson.databind, org.apache.kafka.clients.CommonClientConfigs, org.apache.kafka.common.config.SaslConfigs, org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala.kstream._, org.apache.kafka.streams.{KafkaStreams, KeyValue, StreamsConfig}, org.apache.kafka.streams.scala.serialization.Serdes._, org.apache.kafka.streams.scala.ImplicitConversions._, org.apache.kafka.common.serialization.{Deserializer, Serde, Serdes, Serializer}, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.node.ObjectNode, com.fasterxml.jackson.databind.node.JsonNodeFactory, com.fasterxml.jackson.databind.node.ObjectNode, org.apache.kafka.connect.json.{JsonDeserializer, JsonSerializer}, org.apache.kafka.streams.Topology, org.json4s._,org.json4s.jackson.JsonMethods._"
+1627437185529:compile
+1627437190146:console
+1627443217982:compile
+1627443237360:run
+1627443271468:exit
+1627520109852:set name := "kafkaStream"
+1627520125316:set scalaVersion := "2.13.6"
+1627520131900:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627520138263:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627520143140:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627520148151:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627520154800:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627520159101:set libraryDependencies += "org.json4s" % "json4s-jackson_2.13" % "4.0.3"
+1627520164270:set libraryDependencies += "org.json4s" % "json4s-native_2.13" % "4.0.3"
+1627520172107:set libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.2"
+1627520177428:session save
+1627520184747:compile
+1627520195133:run
+1627520223994:exit
+1627526085401:set name := "kafkaStream"
+1627526097786:set scalaVersion := "2.13.6"
+1627526104269:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627526110303:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627526115759:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627526120346:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627526125216:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627526133298:set libraryDependencies += "org.json4s" % "json4s-jackson_2.13" % "4.0.3"
+1627526141325:set libraryDependencies += "org.json4s" % "json4s-native_2.13" % "4.0.3"
+1627526145972:set libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.2"
+1627526150406:set libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.11.2"
+1627526156365:session save
+1627526158988:compile
+1627526166586:run
+1627526193018:compile -deprecation
+1627526202746:run -deplication
+1627526208545:exit
+1627545717191:set name :="kafkaStreams"
+1627545728348:set scalaVersion :="2.13.6"
+1627545735086:set libraryDependencies += "org.apache.kafka" %% "kafka" % "2.8.0"
+1627545739253:set libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.8.0"
+1627545743103:set libraryDependencies += "org.apache.kafka" %% "kafka-streams-scala" % "2.8.0"
+1627545747899:set libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.8.0"
+1627545754140:set libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.8.0-alpha2"
+1627545757713:set libraryDependencies += "org.json4s" % "json4s-jackson_2.13" % "4.0.3"
+1627545761336:set libraryDependencies += "org.json4s" % "json4s-native_2.13" % "4.0.3"
+1627545766226:set libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.2"
+1627545770788:set libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.11.2"
+1627545776082:set libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0"
+1627545779748:set libraryDependencies += "io.circe" %% "circe-parser" % "0.14.1"
+1627545784043:session save
+1627545787350:compile
+1627545793307:run
+1627545803109:exit

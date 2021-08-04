@@ -1,0 +1,16 @@
+[debug] > Exec(set initialCommands += "import org.apache.kafka.streams.scala.StreamsBuilder, org.apache.kafka.streams.scala._, org.apache.kafka.streams._, org.apache.kafka.common.serialization.Serdes, java.util.Properties, java.time.Duration", Some(2f421f32-1f38-4493-acaf-ed3c4233b109), Some(CommandSource(console0)))
+[info] Defining initialCommands
+[info] The new value will be used by Compile / console, Compile / consoleQuick and 2 others.
+[info] 	Run `last` for details.
+[debug] Defining 
+[debug] 	initialCommands
+[debug] 
+[debug] The new value will be used by 
+[debug] 	Compile / console
+[debug] 	Compile / consoleQuick
+[debug] 	Test / console
+[debug] 	Test / consoleQuick
+[debug] 	consoleProject
+[info] Reapplying settings...
+[info] set current project to scalaws (in build file:/Users/jeejunhyun/devKaf/scalaws/)
+[debug] > Exec(shell, None, None)
