@@ -1,0 +1,9 @@
+# ignore data folders and files
+*/
+*.json
+# exception
+!etl/
+!pipeline/
+
+.DS_Store
+*.log
