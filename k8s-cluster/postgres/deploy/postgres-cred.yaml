@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-cred
+type: Opaque
+stringData:
+  POSTGRES_USER: haruband
+  POSTGRES_PASSWORD: haru1004
+  POSTGRES_DATABASE: airflow
