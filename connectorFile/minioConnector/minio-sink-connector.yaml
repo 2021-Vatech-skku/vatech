@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnector
 metadata:
-  name: minio-sink-connector-j1
+  name: minio-sink-connector-j4
   namespace: kafka
   labels: 
     strimzi.io/cluster: kafkaconnect
@@ -10,21 +10,28 @@ spec:
   tasksMax: 1
   config:
     storage.class: io.confluent.connect.s3.storage.S3Storage
+    #The format class to use when writing data to the store.
     format.class: io.confluent.connect.s3.format.json.JsonFormat
+    #The converter capable of understanding the data format 
+    ##of the key of each record on this topic
     key.converter: org.apache.kafka.connect.json.JsonConverter
-    key.converter.schemas.enable: false
+    key.converter.schemas.enable: true
     locale: ko-KR
+    #The partitioner to use when writing data to the store
     partitioner.class: io.confluent.connect.storage.partitioner.DailyPartitioner
-    s3.bucket.name: jee-test
+    s3.bucket.name: skku-sanhak
+    #The Part Size in S3 Multi-part Uploads
     s3.part.size: 5242880
+    #Number of records written to store before invoking file commits
     flush.size: 5
+    #The schema compatibility rule to use when the connector is observing schema changes
     schema.compatibility: NONE
     schema.generator.class: io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator
     store.url: "http://minio.minio.svc.cluster.local:80"
     timezone: Asia/Seoul
-    topics: jee.clever.dev0-chart.test,jee.clever.dev0-receipt.test,jee.clever.dev0-patient.test
+    topics: jee.clever.dev0-chart.test,jee.clever.dev0-receipt.test,jee.clever.dev0-patient.filtered.test
     value.converter: org.apache.kafka.connect.json.JsonConverter
-    value.schemas.enable: false
+    value.converter.schemas.enable: true
   
 
 
