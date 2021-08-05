@@ -1,0 +1,7 @@
+[debug] > Exec(compile, Some(45890f03-c11b-456a-ba53-73335b5c5fd0), Some(CommandSource(console0)))
+[debug] Evaluating tasks: Compile / compile
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[info] compiling 1 Scala source to /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes ...
+[info] done compiling
+[success] Total time: 5 s, completed Aug 5, 2021 9:45:34 AM
+[debug] > Exec(shell, None, None)

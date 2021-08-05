@@ -1,11 +1,9 @@
-[0m[[0m[0mdebug[0m] [0m[0mPackaging /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/kafkastreams_2.13-0.1.0-SNAPSHOT.jar ...[0m
-[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	convertjson.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	convertjson$$anon$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson$$anon$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	convertjson$delayedInit$body.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson$delayedInit$body.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	convertjson$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m
+[debug] Packaging /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/kafkastreams_2.13-0.1.0-SNAPSHOT.jar ...
+[debug] Input file mappings:
+[debug] 	convertjson.class
+[debug] 	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson.class
+[debug] 	convertjson$delayedInit$body.class
+[debug] 	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson$delayedInit$body.class
+[debug] 	convertjson$.class
+[debug] 	  /Users/jeejunhyun/devKaf/scalaws/target/scala-2.13/classes/convertjson$.class
+[debug] Done packaging.

@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:21.04
 USER root:root
 RUN mkdir -p /scalaws
 COPY . /scalaws
