@@ -4,6 +4,7 @@
 # exception
 !etl/
 !pipeline/
+!docker-spark/
 
 .DS_Store
 *.log
