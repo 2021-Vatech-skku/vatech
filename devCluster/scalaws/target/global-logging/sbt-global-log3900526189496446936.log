@@ -1,8 +1,0 @@
-[debug] > Exec(run, Some(0d89d835-d541-4fc4-9742-2248461ac8c7), Some(CommandSource(console0)))
-[debug] Evaluating tasks: Compile / run
-[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
-[error] Nonzero exit code: 1
-[error] (Compile / run) Nonzero exit code: 1
-[error] Total time: 1 s, completed Aug 5, 2021 9:45:35 AM
-[debug] > Exec(shell, None, None)
-[info] shutting down sbt server

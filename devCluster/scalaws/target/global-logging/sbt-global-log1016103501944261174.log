@@ -1,6 +1,0 @@
-[debug] > Exec(compile, Some(3c2d5d53-9ddf-4d9b-9512-bd1e1c93baf0), Some(CommandSource(console0)))
-[debug] Evaluating tasks: Compile / compile
-[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
-[success] Total time: 2 s, completed Jul 26, 2021 5:55:57 PM
-[debug] > Exec(shell, None, None)
-[info] shutting down sbt server
