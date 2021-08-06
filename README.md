@@ -13,7 +13,7 @@ docker가 설치되어있다는 가정하에, docker를 작동시키고, termina
 //f: 파일명 지정, -d : background 실행
 docker-compose -f docker-compose-lone.yml up -d
 ```
-------
+
 docker 프로그램으로 확인해보면 container들이 생성된 것을 확인할 수 있다.
 
 --------------
@@ -40,14 +40,15 @@ yaml파일에서 지정해준 주소와 포트로 접속하면, kafka broker의 
 
 --------
 ## Deploying a Kafka cluster on a Kubernetes
-----
+
 kubernetes가 관리하는 cluster 내에 kafka를 올리기 위해서, [strimzi](https://strimzi.io/docs/operators/latest/using.html)에서 제공하는 operator와 custom resource 파일을 활용했다. 
 
-----
+
 ### Prerequisites
 [strimzi](https://strimzi.io/docs/operators/latest/deploying.html)에서 
 + Kubernetes 1.16 이후 버전의 cluster,
 + kubectl command-line tool이 설치되고, kubernetes running cluster와 연결되어 있어야함
+
 을 명시하고 있다.
 
 먼저 kubernetes에 kafka를 배치할 name space를 만들어 준다.
