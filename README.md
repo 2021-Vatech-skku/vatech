@@ -133,6 +133,32 @@ kubectl get deployments -n my-kafka-namespace
 ```
 ------
 ## Kafka Connect
-[kafka connect](https://docs.confluent.io/platform/current/connect/index.html)는 kafka cluster와 mongoDB, minio와 같은 다른 서비스들을 쉽게 연결시켜주는 tool이다.  connect cluster를 생성하고, cluster 내부에 각 서비스에 맞는connector 객체를 생성하는 방식이다.  따라서 connect cluster를 kubernetes에 배치할때 사용하는 image에, 각 서비스에서 제공하는 connector plugin들을 포함해야한다.
-strimzi에서 제공하는 examples/connect/kafka-connect.yaml을 참고하여 [세로운 yaml]()을 만들었다.
+[kafka connect](https://docs.confluent.io/platform/current/connect/index.html)는 kafka cluster와 mongoDB, minio와 같은 다른 서비스들을 쉽게 연결시켜주는 tool이다. 
+
+connect cluster를 생성하고, cluster 내부에 각 서비스에 맞는connector 객체를 생성하는 방식이다. 
+
+따라서 connect cluster를 kubernetes에 배치할때 사용하는 image에, 각 서비스에서 제공하는 connector plugin들을 포함해야한다. plugin 파일은 서비스 홈페이지에서 받을 수 있다. 
+```
+//예시: [mongoDB connector plugin](https://docs.mongodb.com/kafka-connector/current/kafka-installation/#std-label-kafka-connector-installation-reference)  
+```
+
+Dockerfile을 작성할때, plugin이 담겨있는 directory를 COPY하는 부분에서 주의할 점은 image build할때 생성되는, 즉 plugin 파일들을 복사해서 넣어줄 ****plugins* directory에 바로 plugin JAR 파일들을 넣으면 안되고, 서비스 
+
+### kafka connect cluster 생성
+strimzi에서 제공하는 examples/connect/kafka-connect.yaml을 참고하여 [세로운 yaml](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/kafkaConnect)을 만들었다.
+
+여기서 사용한 image는 직접 작성한 [Dockerfile](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/kafkaConnect)을 사용했는데, 내용을 보면 COPY 부분에 mongoDB와 S3 connector plugin 파일을 COPY하는 것을 확인할 수 있다.
+
+[kafka-connect.yaml](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/kafkaConnect)은 이 image를 기반으로 kafka connect에 관련된custom resource를 만들고, kubernetes에 생성해두었던 clustert operator가 connect cluster를 생성해주게된다. 
+```
+kubectl apply -f kafka-connect.yaml -n my-kafka-namespace
+```
+### [mongoDB conncetor](https://docs.mongodb.com/kafka-connector/current/) 생성
+connector의 종류에는 크게 두가지가 있다. 
++ kafka로 message를 넣어주는 source connector
++ kafka로부터 message를 내보내는 sink connector
+
+즉 MongoDB-Source-Connector는 mongoDB로부터 데이터를 가져와 kafka에 넣어주는 connector이다. 
+
+
 
