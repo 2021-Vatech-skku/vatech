@@ -18,6 +18,7 @@ docker-compose -f docker-compose-lone.yml up -d
 docker 프로그램으로 확인해보면 container들이 생성된 것을 확인할 수 있다.
 
 --------------
+### produce, comsume 확인
 kafka에서 제공하는 shell 파일 내에 [kafka-console-consumer.sh, kafka-console-consumer.sh](https://kafka.apache.org/quickstart)로도 kafka 정상 작동 여부를 확인할 수 있지만,
 [python code](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/kafkaClients)를 이용해서 확인할 수 있다.
 
@@ -104,4 +105,34 @@ kubectl create -f ./install/cluster-operator -n my-kafka-namespace
 kubectl get deployments -n my-kafka-namespace
 ```
 
+### kafka cluster 배치
+kafka 리소스를 만들기 위해 yaml파일을 이용해 특정 설정값들을 제공한다.
+
+이 과정에서는 strimzi가 제공한 example YAMLs file을 이용했다.  strimzi.0.24.0/examples/ 에 있는 파일들이다.
+
+kafka cluster 관련 yaml 파일들은 strimzi.0.24.0/examples/kafka 에 있다.  여러 대의 kafka를 사용할지, 어떤 종류의 cluster를 사용할지 정해서 배치하면 된다. cluster 종류는 [strimzi document](https://strimzi.io/docs/operators/latest/deploying.html#deploying-cluster-operator-str)를 참고하자.  
+
+기본적으로 yaml에 topicOperator와 userOperator 설정이 되어있다. 
+```
+...
+entityOperator
+  topicOperator: {}
+  userOperator: {}
+  ```
+  이런식으로 작성되어 있으면, 사용하겠다고 설정해둔 것.
+
+
+kafka-ephemeral cluster 생성 - kafka : 3, zookeeper : 3, topicOperator: enabled, userOperator: enabled
+```
+kuberctl apply -f examples/kafka/kafka-ephemeral.yaml
+```
+
+배치 확인
+```
+kubectl get deployments -n my-kafka-namespace
+```
+------
+## Kafka Connect
+[kafka connect](https://docs.confluent.io/platform/current/connect/index.html)는 kafka cluster와 mongoDB, minio와 같은 다른 서비스들을 쉽게 연결시켜주는 tool이다.  connect cluster를 생성하고, cluster 내부에 각 서비스에 맞는connector 객체를 생성하는 방식이다.  따라서 connect cluster를 kubernetes에 배치할때 사용하는 image에, 각 서비스에서 제공하는 connector plugin들을 포함해야한다.
+strimzi에서 제공하는 examples/connect/kafka-connect.yaml을 참고하여 [세로운 yaml]()을 만들었다.
 

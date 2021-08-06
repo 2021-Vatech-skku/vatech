@@ -46,6 +46,17 @@ import java.util.Map;
 
 public class Streams {
 
+    public static void change(JsonNode parent, String fieldName, String newValue) {
+        if (parent.has(fieldName)) {
+            ((ObjectNode) parent).put(fieldName, newValue);
+        }
+
+        // Now, recursively invoke this method on all properties
+        for (JsonNode child : parent) {
+            change(child, fieldName, newValue);
+        }
+    }
+
     public static void main(final String[] args) {
 
         final String bootstrapServers = args.length > 0 ? args[0] : "kafka-kafka-bootstrap:9093";
@@ -63,8 +74,8 @@ public class Streams {
         final Properties streamsConfiguration = new Properties();
         // Give the Streams application a unique name.  The name must be unique in the Kafka cluster
         // against which the application is run.
-        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-masking-jee");
-        streamsConfiguration.put(StreamsConfig.CLIENT_ID_CONFIG, "data-masking-client-jee");
+        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, "data-masking-jee3");
+        streamsConfiguration.put(StreamsConfig.CLIENT_ID_CONFIG, "data-masking-client-jee3");
         // Where to find Kafka broker(s).
         streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         // Specify default (de)serializers for record keys and for record values.
@@ -99,19 +110,30 @@ public class Streams {
 //            } catch (ParseException e) {
 //                e.printStackTrace();
 //            }
-            ((ObjectNode)v).put("name", "*****");
+            String preJson = "{\"name\" : \"*****\"}";
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node1 = null;
+            try {
+                node1 = mapper.readTree(preJson);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            JsonNode node2 = v.get("payload");
+            JsonNode node3 =  node2.get("fullDocument");
+            //((ObjectNode)((JsonNode)node3)).replace("name",node1);
+            ((ObjectNode)node3).put("name", "*****");
             System.out.println("check2");
             return (JsonNode) v;
         });
 
-        System.out.println("check2");
+        System.out.println("check3");
 
 
         // Write (i.e. persist) the results to a new Kafka topic called "UppercasedTextLinesTopic".
         //
         // In this case we can rely on the default serializers for keys and values because their data
         // types did not change, i.e. we only need to provide the name of the output topic.
-        filterstr.to("jee.filtered.test5");
+        filterstr.to("jee.filtered.test6",Produced.with(jsonSerde,jsonSerde));
 
 
 

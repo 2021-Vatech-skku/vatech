@@ -7,5 +7,5 @@ metadata:
 spec:
   containers:
   - name: myapp-container
-    image: james4230/pypod:latest
+    image: james4230/testpod:latest
 
