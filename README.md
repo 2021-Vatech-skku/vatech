@@ -174,3 +174,27 @@ kubectl apply -f monogodb-source-connector.yaml -n my-kafka-namespace
 
 mongodb-source-connector.yaml 파일에서 지정해준DB의 collection 에서 data를 가져와 kafka의 새로운  topic에 저장된다. 저장되는 topic의 이름은 default로는 \<DBname\>.\<collectionName\>으로 저장된다. 
 
+
+## Kafka Streams
+[kafka streams](https://kafka.apache.org/documentation/streams/)는 kafka broker내부에 stream을 셍성해, topic 내에 있는 message에 일련의 로직을 수행할 수 있게 해주는 라이브러리이다.
+
+현재 java, scala 언어를 지원한다. 
+
+---
+### [Kafka-Streams-Scala](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/KafkaStreams)
+
+kafka streams는 라이브러리이기 때문에, 코드를 작성해서 코드를 실행하는 pod로 kubernetes에 띄워줘야한다.
+
+[소스코드 convertjson.scala](https://github.com/2021-Vatech-skku/vatech/blob/junhyun/KafkaStreams/convertjson.scala)는 kafka streams 구현방식중에 [streams DSL](https://docs.confluent.io/platform/current/streams/developer-guide/dsl-api.html)을 사용하였고, mongoDB로부터 받아온 json형식 환자데이터가 들어있는 kafka topic에서, 데이터를 가져와 개인정보의 일부인 name을 masking하는 작업을 나타낸다.  이후에 새로운 kafka의 topic으로 보낸다.
+
+
+Dockerfile을 작성하여 필요한 scala dependency가 포함된 build.sbt 파일과, 소스 코드 convertjson.scala를 포함시켜줬다.
+image는 빌드후 [개인 repository](https://hub.docker.com/repositories/james4230)에 push했다.
+
+workpod.yaml로 pod를 생성
+```
+kubectl apply -f workpod.yaml -n my-kafka-namespace
+```
+pod가 올라가고 나면 autoSBT.sh가 실행되어 sbt server를 실행시키고 소스코드를 compile한후 run한다.
+
+
