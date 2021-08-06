@@ -1,4 +1,5 @@
 import os
+import json
 import argparse
 from datetime import datetime, date
 from pyspark import SparkContext, SQLContext
@@ -8,11 +9,12 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import from_json, flatten, explode, udf, last
 
 timetostr = udf(lambda x: datetime.fromtimestamp(x).strftime("%Y%m%d") if type(x) is int else None)
+documentKeytoOid = udf(lambda d: json.loads(d)["_id"]["$oid"])
 
 schema = StructType(
     [
       StructField(
-          "_id", StructType([StructField("$oid", StringType(), False)]), False
+          "documentKey", StructType([StructField("$oid", StringType(), False)]), False
       ),
       StructField("content", StructType([
         StructField("tx", StructType([
@@ -44,14 +46,13 @@ sc.set("spark.hadoop.fs.s3a.endpoint", "https://minio.develop.vsmart00.com")
 spark = SparkSession.builder.appName("Chart ETL").config(conf=sc).getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
-url = "s3a://mongodb/topics/clever.dev0-chart"
 mode = "overwrite"
 parser = argparse.ArgumentParser()
 parser.add_argument("-y", "--year", help="target year", type=int, default=0)
 parser.add_argument("-m", "--month", help="target month", type=int, default=0)
 parser.add_argument("-d", "--day", help="target day", type=int, default=0)
 args = parser.parse_args()
-url = "s3a://jee-test/topics/jee.clever.dev0-chart.test"
+url = "s3a://skku-sanhak/topics/jee.clever.dev0-chart.test"
 if args.year > 0:
   url = url + "/year={:04d}".format(args.year)
   if args.month > 0:
@@ -63,12 +64,13 @@ if args.year > 0:
 df = spark.read.format("json").load(url)
 
 # append
-df0 = df.filter(df.operationType == "insert").select("fullDocument")
-df0 = df0.withColumn("test", from_json(df0.fullDocument, schema)).select("test.*")
+df0 = df.filter(df.operationType == "insert").select("documentKey", "fullDocument")
+df0 = df0.withColumn("oid", documentKeytoOid(df0["documentKey"]))
+df0 = df0.withColumn("test", from_json(df0.fullDocument, schema)).select("oid", "test.*")
 df0 = df0.withColumn("content", explode(flatten("content.tx.treatments.treats")))
 df0 = df0.withColumn("date", timetostr(df0["date.$date"]))
 df0 = df0.select(
-  df0["_id.$oid"].alias("oid"), 
+  df0["oid"], 
   df0["content.name"].alias("name"), 
   df0["content.price"].alias("price"), 
   df0["hospitalId"].alias("hospital"), 
@@ -79,9 +81,10 @@ df0.show(10, truncate=True)
 df0.coalesce(1).write.format("delta").mode(mode).save("s3a://test/sh/chart")
 
 # Update
-df1 = df.filter(df.operationType == "update").select("fullDocument")
-df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("test.*")
-df1 = df1.sort("lastModifiedTime").groupBy(df1["_id.$oid"].alias("oid")).agg(
+df1 = df.filter(df.operationType == "update").select("documentKey", "fullDocument")
+df1 = df1.withColumn("oid", documentKeytoOid(df1["documentKey"]))
+df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("oid", "test.*")
+df1 = df1.sort("lastModifiedTime").groupBy(df1["oid"]).agg(
   *map(
     lambda x: last(df1[x]).alias(x),
     filter(lambda x: x != "oid", df1.schema.names),

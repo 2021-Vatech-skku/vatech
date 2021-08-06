@@ -1,4 +1,5 @@
 import os
+import json
 import argparse
 from datetime import datetime, date
 from pyspark import SparkContext, SQLContext
@@ -8,6 +9,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import from_json, udf, last
 
 timetostr = udf(lambda x: datetime.fromtimestamp(x).strftime("%Y%m%d") if type(x) is int else None)
+documentKeytoOid = udf(lambda d: json.loads(d)["_id"]["$oid"])
 
 schema = StructType(
     [
@@ -53,10 +55,12 @@ if args.year > 0:
 df = spark.read.format("json").load(url)
 
 # append
-df0 = df.filter(df.operationType == "insert").select("fullDocument")
-df0 = df0.withColumn("test", from_json(df0.fullDocument, schema)).select("test.*")
+df0 = df.filter(df.operationType == "insert").select("documentKey", "fullDocument")
+df0 = df0.withColumn("oid", documentKeytoOid(df0["documentKey"]))
+df0 = df0.withColumn("test", from_json(df0.fullDocument, schema)).select("oid", "test.*")
 df0 = df0.withColumn("date", timetostr(df0["birthDate.$date"]))
 df0 = df0.select(
+  df0["oid"],
   df0["id"].alias("patient"), 
   df0["hospitalId"].alias("hospital"), 
   df0["sex"],
@@ -69,16 +73,18 @@ df0.show(10, truncate=True)
 df0.coalesce(1).write.format("delta").mode(mode).save("s3a://test/sh/patient")
 
 # update
-df1 = df.filter(df.operationType == "update").select("fullDocument")
-df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("test.*")
-df1 = df1.sort("lastModifiedTime").groupBy(df1["id"]).agg(
+df1 = df.filter(df.operationType == "update").select("documentKey", "fullDocument")
+df1 = df1.withColumn("oid", documentKeytoOid(df1["documentKey"]))
+df1 = df1.withColumn("test", from_json(df1.fullDocument, schema)).select("oid", "test.*")
+df1 = df1.sort("lastModifiedTime").groupBy(df1["oid"]).agg(
   *map(
     lambda x: last(df1[x]).alias(x),
-    filter(lambda x: x != "id", df1.schema.names),
+    filter(lambda x: x != "oid", df1.schema.names),
   )
 )
 df1 = df1.withColumn("date", timetostr(df1["birthDate.$date"]))
 df1 = df1.select(
+  df1["oid"],
   df1["id"].alias("patient"), 
   df1["hospitalId"].alias("hospital"), 
   df1["sex"],
