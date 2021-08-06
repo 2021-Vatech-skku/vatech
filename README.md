@@ -90,7 +90,7 @@ sed -i '' 's/namespace: .*/namespace: my-kafka-namespace/' install/cluster-opera
 ```
 
 ### Deploy the Cluster Operator
-Cluster [Operator](redhat.com/ko/topics/containers/what-is-a-kubernetes-operator) 는 Custom Resource를 기반으로 kafka cluster 뿐만아니라 kafka connect, kafka user cluster도 생성해준다.
+Cluster [Operator](https://www.redhat.com/ko/topics/containers/what-is-a-kubernetes-operator) 는 Custom Resource를 기반으로 kafka cluster 뿐만아니라 kafka connect, kafka user cluster도 생성해준다.
 
 ```
 // move to downloaded strimzi file 
