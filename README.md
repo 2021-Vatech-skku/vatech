@@ -5,6 +5,7 @@ kafka cluster는 보통 kafka(broker) 여러 대와 zookeeper 여러대로 구�
 
 테스트를 위해 docker 환경에서 먼저 kafka cluster를 구성해보았다.
 docker에 여러 컨테이너를 올리기에 용이한 docker-compose 방법을 썼다.
+
 [단일 kafka, 단일 zookeeper 구성 yaml 파일](https://github.com/JackCokebb/kafka-all/blob/master/kafkaServer/docker-compose-lone.yml)
 
 docker가 설치되어있다는 가정하에, docker를 작동시키고, terminal에서 코드를 실행시킨다.
@@ -12,8 +13,9 @@ docker가 설치되어있다는 가정하에, docker를 작동시키고, termina
 //f: 파일명 지정, -d : background 실행
 docker-compose -f docker-compose-lone.yml up -d
 ```
+------
+docker 프로그램으로 확인해보면 container들이 생성된 것을 확인할 수 있다.
 
-docker 프로그램으로 확인시, container들이 잘 올라간 것을 확인할 수 있다.
 --------------
 kafka에서 제공하는 shell 파일 내에 [kafka-console-consumer.sh, kafka-console-consumer.sh](https://kafka.apache.org/quickstart)로도 kafka 정상 작동 여부를 확인할 수 있지만,
 [python code](https://github.com/2021-Vatech-skku/vatech/tree/junhyun/kafkaClients)를 이용해서 확인할 수 있다.
@@ -29,5 +31,30 @@ python3 sample-consumer.py
 
 //실행시 port number, topic name, bootstrap.server 설정 등에 주의한다. 
 //개인 설정에 맞게 실행
+```
+직전에 올린 docker-compose용 [단일 kafka, 단일 zookeeper 구성 yaml 파일](https://github.com/JackCokebb/kafka-all/blob/master/kafkaServer/docker-compose-lone.yml)에는[kafdrop](https://github.com/obsidiandynamics/kafdrop)이라는 kafka 모니터링 웹 UI 서비스도 같이 포함되어 있다.
+yaml파일에서 지정해준 주소와 포트로 접속하면, kafka broker의 상태, topic list, message등 확인할 수 있다.
+
+현재 docker-compose를 local환경에서 올렸다고 가정하고, yaml파일 기준 포트가 9001번으로 할당되어 있으므로, [localhost:9001](localhost:9001)로 접속해보면 kafka를 모니터링할 수 있다.
+이제 python code로 생성한 message, topic등을 확인해볼 수 있다.
+
+--------
+## Deploying a Kafka cluster on a Kubernetes
+----
+kubernetes가 관리하는 cluster 내에 kafka를 올리기 위해서, [strimzi](https://strimzi.io/docs/operators/latest/using.html)에서 제공하는 operator와 custom resource 파일을 활용했다. 
+
+----
+### Prerequisites
+[strimzi](https://strimzi.io/docs/operators/latest/deploying.html)에서 
++ Kubernetes 1.16 이후 버전의 cluster,
++ kubectl command-line tool이 설치되고, kubernetes running cluster와 연결되어 있어야함
+을 명시하고 있다.
+
+먼저 kubernetes에 kafka를 배치할 name space를 만들어 준다.
+이때 namespace는 한 개여도 되고, 여러 개여도 상관없다.
+
+#### single namespace로 배치
+-----
+
 ```
 
