@@ -138,9 +138,8 @@ kubectl get deployments -n my-kafka-namespace
 connect cluster를 생성하고, cluster 내부에 각 서비스에 맞는connector 객체를 생성하는 방식이다. 
 
 따라서 connect cluster를 kubernetes에 배치할때 사용하는 image에, 각 서비스에서 제공하는 connector plugin들을 포함해야한다. plugin 파일은 서비스 홈페이지에서 받을 수 있다. 
-```
 //예시: [mongoDB connector plugin](https://docs.mongodb.com/kafka-connector/current/kafka-installation/#std-label-kafka-connector-installation-reference)  
-```
+
 
 Dockerfile을 작성할때, plugin이 담겨있는 directory를 COPY하는 부분에서 주의할 점은 image build할때 생성되는, 즉 plugin 파일들을 복사해서 넣어줄 *plugin* directory에 바로 plugin JAR 파일들을 넣으면 안되고, 
 서비스마다 directory를 만들어서 한번에 넣어줘야 전체를 읽어들인다. 
