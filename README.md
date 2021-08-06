@@ -173,5 +173,5 @@ connector의 종류에는 크게 두가지가 있다.
 kubectl apply -f monogodb-source-connector.yaml -n my-kafka-namespace
 ```
 
-mongodb-source-connector.yaml 파일에서 지정해준DB의 collection 에서 data를 가져와 kafka의 새로운  topic에 저장된다. 저장되는 topic의 이름은 default로는 <DBname>.<collectionName>으로 저장된다. 
+mongodb-source-connector.yaml 파일에서 지정해준DB의 collection 에서 data를 가져와 kafka의 새로운  topic에 저장된다. 저장되는 topic의 이름은 default로는 \<DBname\>.\<collectionName\>으로 저장된다. 
 
