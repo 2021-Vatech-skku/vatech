@@ -7,6 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 from pyspark.sql.types import *
 from pyspark.sql.functions import col, from_json, last, first
+from pyspark.sql.utils import *
 from delta.tables import *
 
 from clever import (
@@ -143,8 +144,11 @@ if __name__ == "__main__":
             s3url = s3url + "/month={:02d}".format(args.month)
             if args.day > 0:
                 s3url = s3url + "/day={:02d}".format(args.day)
-
-    df0 = sq.read.format(args.inputformat).load(s3url)
+    try:
+        df0 = sq.read.format(args.inputformat).load(s3url)
+    except AnalysisException:
+        print("No Data for {}-{}-{}".format(args.year, args.month, args.day))
+        exit(0)
 
     if "chart" in args.collection:
         coll="chart"
