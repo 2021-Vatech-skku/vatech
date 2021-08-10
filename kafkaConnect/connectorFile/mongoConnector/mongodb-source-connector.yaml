@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnector
 metadata:
-  name: mongodb-source-connector-j2
+  name: mongodb-source-connector-j3
   namespace: kafka
   labels:
     # The strimzi.io/cluster label identifies the KafkaConnect instance
@@ -13,7 +13,7 @@ spec:
   class: com.mongodb.kafka.connect.MongoSourceConnector
   tasksMax: 1
   config:
-    connection.uri: "mongodb://haruband:kk3249@mongodb-mongos.mongodb.svc.cluster.local:27017/?authSource=admin&ssl=false"
+    connection.uri: "mongodb://username:password@mongodbURI/?authSource=admin&ssl=false"
     database: clever
     #collection: dev0-patient
     topic.prefix: jee
@@ -26,11 +26,12 @@ spec:
     #Only publish the changed document instead of the full change stream document
     publish.full.document.only: false
     #Determines what to return for update operations when using a Change Stream. 
-    #Update Lookup 옵션을 사용하면, 변경으로 인한 결과 Document도 Change Stream에 함께 전달
+    #if Update Lookup is set, pass the change stream with modified result Documnet also
     change.stream.full.document: updateLookup
     #An array of objects describing the pipeline operations to run.
     #define a custom aggregation pipeline to filter or modify the change events output.
+    #select several collections to get data with ns.coll
     pipeline: >
-      [{"$match": {"operationType": {"$in": ["insert","update","replace","delete"]}}},{"$project": {"_id": 1,"ns": 1,"operationType": 1,"fullDocument": 1,"updateDescription": 1,"documentKey": 1}}]    
+      [{"$match": {"operationType": {"$in": ["insert","update","replace","delete"]}, "ns.coll": {"$regex": /^(dev0-chart|dev0-patient|dev0-receipt)$/}}},{"$project": {"_id": 1,"ns": 1,"operationType": 1,"fullDocument": 1,"updateDescription": 1,"documentKey": 1}}]    
 
 
