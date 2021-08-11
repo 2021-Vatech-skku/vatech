@@ -99,7 +99,7 @@ df = spark.read.format("delta").load("s3a://test/sh/patient")
 df = df.join(df1, df["patient"] == df1["patient"], "leftanti")
 df2 = df.union(df1)
 df2.coalesce(1).write.format("delta").mode("overwrite").save("s3a://test/sh/patient")
-df2.show()
+df2.show(10)
 print("Uploaded.")
 
 '''
